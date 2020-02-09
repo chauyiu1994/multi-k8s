@@ -1,0 +1,17 @@
+# if this claim is attached to a pod, k8s should find a instance of starage that meet the requirement
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-persistent-volume-claim
+spec:
+  # accessModes:
+  # 1. ReadWriteOnce: Can be used buy a single node
+  # 2. ReadOnlyMany: Multiple nodes can read from this
+  # 3. ReadWirteMany: Can be read and written to by many nodes
+  accessModes:
+    - ReadWriteOnce
+  # request for a resource of 2GB of storage instance
+  resources:
+    requests:
+      storage: 2Gi
+  # storageClassName:

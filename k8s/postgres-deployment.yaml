@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      # get access to the persistent volume claim
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: database-persistent-volume-claim
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          # attach the persistent volume claim to the pod
+          volumeMounts:
+            - name: postgres-storage
+              # backup this folder in the container to the volume
+              mountPath: /var/lib/postgresql/data
+              # store in a folder called postgres in the volume
+              subPath: postgres
+          # container will use this as inital password
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key:  PGPASSWORD
